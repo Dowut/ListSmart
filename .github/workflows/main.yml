@@ -1,0 +1,28 @@
+name: Test and push
+
+on: [push]
+
+jobs:
+  test:
+      runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-java@v1
+          with:
+            java-version: 11
+        - run: mkdir -p build/reports
+        - run: ./gradlew test > build/reports/reports.txt
+        - uses: actions/upload-artifact@v2
+          with:
+           name: my-artifact
+           path: build/reports/reports.txt
+  check:
+      runs-on: windows-latest
+      needs: test
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-java@v1
+          with:
+           java-version: 11
+        - run: ./gradlew check
+          working-directory: doubles
